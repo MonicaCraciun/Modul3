@@ -1,31 +1,43 @@
 package com.application.modul3.user;
 
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.application.modul3.appointment.Appointment;
 
 @Entity
 @Table(name = "user", schema = "administration")
 public class User {
+
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	
-	@Column(name= "first_name")
+
+	@Column(name = "first_name")
 	private String firstName;
-	
+
 	@Column(name = "last_name")
 	private String lastName;
-	
+
 	@Column(name = "mail")
 	private String mail;
-	
+
 	@Column(name = "address")
 	private String address;
+
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.REMOVE }, orphanRemoval = true)
+	private Set<Appointment> appointments;
 
 	public Integer getId() {
 		return id;
@@ -66,9 +78,18 @@ public class User {
 	public void setAddress(String addess) {
 		this.address = addess;
 	}
-	
-	
-	
-	
+
+	public Set<Appointment> getAppointments() {
+		return appointments;
+	}
+
+	public void setAppointments(Set<Appointment> appointments) {
+		this.appointments = appointments;
+	}
+
+	public void addAppointment(Appointment appointment) {
+		this.appointments.add(appointment);
+		appointment.setUser(this);
+	}
 
 }
